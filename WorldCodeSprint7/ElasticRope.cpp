@@ -54,17 +54,21 @@ bool is_a_valid_line_v1(int ind1, int ind2){
 
     Point midPoint;
 
+    midPoint.x = (v1[ind1].x + v1[ind2].x)/2 ;
+    midPoint.y = (v1[ind1].y + v1[ind2].y)/2 ;
+
+    if(point_inside_polygon(midPoint)==true) return false;
+
     for(int i=0; i<v.size()-1; i++){
         if( (i==ind1 && i+1==ind2) || (i==ind2 && i+1==ind1) ) continue;
-
         if( doIntersect( v1[ind1] , v1[ind2] , v[i] , v[i+1]) == true) return false;
-
-        midPoint.x = (v1[ind1].x + v1[ind2].x)/2 ;
-        midPoint.y = (v1[ind1].y + v1[ind2].y)/2 ;
-
-        if(point_inside_polygon(midPoint)==true) return false;
     }
 
+    if( (ind1==0 && ind2==v.size()-1) || (ind2==0 && ind1==v.size()-1) ) return true;
+
+    if( doIntersect( v1[ind1] , v1[ind2] , v[0] , v[v.size()-1]) == true) return false;
+
+    return true;
 }
 
 
