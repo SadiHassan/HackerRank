@@ -50,6 +50,13 @@ bool doIntersect(Point p1, Point q1, Point p2, Point q2)
     return false;
 }
 
+int find_next_index_positive_direction(int now_ind , int next_ind){
+
+
+
+}
+
+
 int main()
 {
 
@@ -82,20 +89,10 @@ int main()
 
     else{
 
-        int now_index = ind1;
+        for(int i=ind1; i<=ind2; i++) v1.push_back(v[i]);
 
-        dist = 0;
-        ans = -1;
-
-        while(1){
-
-            next_index = find_next_index_positive_direction(now_index);
-            dist = dist + find_dist( now_index , next_index );
-
-            if(next_index==ind2) break;
-
-            now_index = next_index;
-        }
+        for(int i=ind1; i>=0; i--) v2.push_back(v[i]);
+        for(int i=v.size()-1; i>=ind2; i--) v2.push_back(v[i]);
 
     }
 
