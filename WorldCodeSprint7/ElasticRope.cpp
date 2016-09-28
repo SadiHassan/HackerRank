@@ -50,10 +50,45 @@ bool doIntersect(Point p1, Point q1, Point p2, Point q2)
     return false;
 }
 
-int find_next_index_positive_direction(int now_ind , int next_ind){
+int find_next_index_v1(int now_ind){
+
+    int next_ind = now_ind + 1;
+    if(next_ind==v1.size()-1) return next_ind;
+
+    while(is_a_valid_line(now_ind,next_ind+1)) next_ind++;
+
+    return next_ind;
+}
+
+double calc_answer_v1(){
+
+    int now_ind = 0, next_ind;
+    double dist = 0;
+
+    while(1){
+        next_ind = find_next_index_v1(now_ind);
+        dist += find_dist(now_ind,next_ind);
+        now_ind = next_ind;
+        if(now_ind == v1.size()-1) break;
+    }
+
+    return dist;
+}
 
 
+double calc_answer_v2(){
 
+    int now_ind = 0, next_ind;
+    double dist = 0;
+
+    while(1){
+        next_ind = find_next_index_v2(now_ind);
+        dist += find_dist(now_ind,next_ind);
+        now_ind = next_ind;
+        if(now_ind == v2.size()-1) break;
+    }
+
+    return dist;
 }
 
 
@@ -61,7 +96,7 @@ int main()
 {
 
     //doIntersect(p1, q1, p2, q2)? cout << "Yes\n": cout << "No\n";
-    double dist , ans ;
+    double dist1 , dist2 ;
 
     cin>>N>>a>>b;
     a--; b--;
@@ -94,6 +129,11 @@ int main()
         for(int i=ind1; i>=0; i--) v2.push_back(v[i]);
         for(int i=v.size()-1; i>=ind2; i--) v2.push_back(v[i]);
 
+        dist1 = calc_answer_v1();
+        dist2 = calc_answer_v2();
+
+        if(dist1>=dist2) cout<<dist1<<endl;
+        else cout<<dist2<<endl;
     }
 
     return 0;
