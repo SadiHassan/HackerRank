@@ -1,5 +1,9 @@
+//Wrong Answer --- Have to check again, interesting problem :)
+
 #include<vector>
 #include <iostream>
+#include<cmath>
+#include<stdio.h>
 using namespace std;
 
 struct Point
@@ -50,6 +54,25 @@ bool doIntersect(Point p1, Point q1, Point p2, Point q2)
     return false;
 }
 
+bool point_inside_polygon(Point p1){
+
+    Point p2;
+
+    p2.x = 2000;
+    p2.y = p1.y;
+
+    int total_intersect = 0;
+
+    for(int i=0; i<v.size()-1; i++)
+        if(doIntersect(p1,p2,v[i],v[i+1]) == true) total_intersect++;
+
+    if(doIntersect(p1,p2,v[0],v[v.size()-1]) == true) total_intersect++;
+
+    if(total_intersect%2==0) return false; //Point is OUTSIDE
+    return true; //Point is INSIDE
+}
+
+
 bool is_a_valid_line_v1(int ind1, int ind2){
 
     Point midPoint;
@@ -57,10 +80,14 @@ bool is_a_valid_line_v1(int ind1, int ind2){
     midPoint.x = (v1[ind1].x + v1[ind2].x)/2 ;
     midPoint.y = (v1[ind1].y + v1[ind2].y)/2 ;
 
+    //cout<<"check for Mid-point inside..."<<endl;
+
     if(point_inside_polygon(midPoint)==true) return false;
 
+    //cout<<"Mid-point outside outside"<<endl;
+
     for(int i=0; i<v.size()-1; i++){
-        if( (i==ind1 && i+1==ind2) || (i==ind2 && i+1==ind1) ) continue;
+        if( (i==ind1 && i+1==ind2) || (i==ind2 && i+1==ind1) ) continue; //continue
         if( doIntersect( v1[ind1] , v1[ind2] , v[i] , v[i+1]) == true) return false;
     }
 
@@ -71,15 +98,62 @@ bool is_a_valid_line_v1(int ind1, int ind2){
     return true;
 }
 
+bool is_a_valid_line_v2(int ind1, int ind2){
+
+    Point midPoint;
+
+    midPoint.x = (v2[ind1].x + v2[ind2].x)/2 ;
+    midPoint.y = (v2[ind1].y + v2[ind2].y)/2 ;
+
+    //cout<<"check for point inside..."<<endl;
+    if(point_inside_polygon(midPoint)==true) return false;
+
+    //cout<<"outside"<<endl;
+    for(int i=0; i<v.size()-1; i++){
+        if( (i==ind1 && i+1==ind2) || (i==ind2 && i+1==ind1) ) continue;
+        if( doIntersect( v2[ind1] , v2[ind2] , v[i] , v[i+1]) == true) return false;
+    }
+
+    if( (ind1==0 && ind2==v.size()-1) || (ind2==0 && ind1==v.size()-1) ) return true;
+
+    if( doIntersect( v2[ind1] , v2[ind2] , v[0] , v[v.size()-1]) == true) return false;
+
+    return true;
+}
 
 int find_next_index_v1(int now_ind){
 
     int next_ind = now_ind + 1;
+    //cout<<"hi : "<<now_ind<<" "<<next_ind<<" "<<v1.size()<<endl;
     if(next_ind==v1.size()-1) return next_ind;
 
-    while(is_a_valid_line_v1(now_ind,next_ind+1)) next_ind++;
+    while(1) {
+        bool res = is_a_valid_line_v1(now_ind,next_ind+1) ;
+
+        if(res==false){
+            cout<<"ami false mama..."<<endl;
+            break;
+        }
+
+        cout<<"valid line : "<<v1[now_ind].x<<","<<v1[now_ind].y<<" <-->"<<v1[next_ind].x<<","<<v1[next_ind].y<<endl;
+        next_ind++;
+    }
 
     return next_ind;
+}
+
+int find_next_index_v2(int now_ind){
+
+    int next_ind = now_ind + 1;
+    if(next_ind==v2.size()-1) return next_ind;
+
+    while(is_a_valid_line_v2(now_ind,next_ind+1)) next_ind++;
+
+    return next_ind;
+}
+
+double find_dist(Point p1, Point p2){
+    return sqrt( (p1.x-p2.x)*(p1.x-p2.x) + (p1.y-p2.y)*(p1.y-p2.y) );
 }
 
 double calc_answer_v1(){
@@ -88,9 +162,16 @@ double calc_answer_v1(){
     double dist = 0;
 
     while(1){
+
+        cout<<v1[now_ind].x<<" "<<v1[now_ind].y<<endl;
+
         next_ind = find_next_index_v1(now_ind);
-        dist += find_dist(now_ind,next_ind);
+
+        cout<<"--> "<<v1[next_ind].x<<" "<<v1[next_ind].y<<endl;
+
+        dist += find_dist( v1[now_ind] , v1[next_ind] );
         now_ind = next_ind;
+
         if(now_ind == v1.size()-1) break;
     }
 
@@ -104,13 +185,16 @@ double calc_answer_v2(){
     double dist = 0;
 
     while(1){
+        cout<<v2[now_ind].x<<" "<<v2[now_ind].y<<endl;
         next_ind = find_next_index_v2(now_ind);
-        dist += find_dist(now_ind,next_ind);
+        cout<<"--> "<<v2[next_ind].x<<" "<<v2[next_ind].y<<endl;
+        dist += find_dist( v2[now_ind] , v2[next_ind] );
         now_ind = next_ind;
         if(now_ind == v2.size()-1) break;
     }
 
     return dist;
+
 }
 
 
@@ -119,6 +203,7 @@ int main()
 
     //doIntersect(p1, q1, p2, q2)? cout << "Yes\n": cout << "No\n";
     double dist1 , dist2 ;
+    freopen("in.txt","r",stdin);
 
     cin>>N>>a>>b;
     a--; b--;
@@ -142,6 +227,8 @@ int main()
         ind2 = a_ind;
     }
 
+    cout<<"points : "<<v[ind1].x<<","<<v[ind1].y<<" "<<v[ind2].x<<","<<v[ind2].y<<endl;
+
     if(ind1==ind2) cout<<"0"<<endl;
 
     else{
@@ -152,7 +239,10 @@ int main()
         for(int i=v.size()-1; i>=ind2; i--) v2.push_back(v[i]);
 
         dist1 = calc_answer_v1();
+        cout<<"dist v1 : "<<dist1<<endl;
+
         dist2 = calc_answer_v2();
+        cout<<"dist v2 : "<<dist2<<endl;
 
         if(dist1>=dist2) cout<<dist1<<endl;
         else cout<<dist2<<endl;
