@@ -54,6 +54,7 @@ int main()
 {
 
     //doIntersect(p1, q1, p2, q2)? cout << "Yes\n": cout << "No\n";
+    double dist , ans ;
 
     cin>>N>>a>>b;
     a--; b--;
@@ -72,11 +73,31 @@ int main()
 
     int ind1=a_ind, ind2=b_ind;
 
-    if(a_ind>=b_ind){
+    if(a_ind>b_ind){
         ind1 = b_ind;
         ind2 = a_ind;
     }
 
+    if(ind1==ind2) cout<<"0"<<endl;
+
+    else{
+
+        int now_index = ind1;
+
+        dist = 0;
+        ans = -1;
+
+        while(1){
+
+            next_index = find_next_index_positive_direction(now_index);
+            dist = dist + find_dist( now_index , next_index );
+
+            if(next_index==ind2) break;
+
+            now_index = next_index;
+        }
+
+    }
 
     return 0;
 }
