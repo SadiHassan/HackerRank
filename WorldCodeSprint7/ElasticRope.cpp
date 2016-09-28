@@ -50,12 +50,30 @@ bool doIntersect(Point p1, Point q1, Point p2, Point q2)
     return false;
 }
 
+bool is_a_valid_line_v1(int ind1, int ind2){
+
+    Point midPoint;
+
+    for(int i=0; i<v.size()-1; i++){
+        if( (i==ind1 && i+1==ind2) || (i==ind2 && i+1==ind1) ) continue;
+
+        if( doIntersect( v1[ind1] , v1[ind2] , v[i] , v[i+1]) == true) return false;
+
+        midPoint.x = (v1[ind1].x + v1[ind2].x)/2 ;
+        midPoint.y = (v1[ind1].y + v1[ind2].y)/2 ;
+
+        if(point_inside_polygon(midPoint)==true) return false;
+    }
+
+}
+
+
 int find_next_index_v1(int now_ind){
 
     int next_ind = now_ind + 1;
     if(next_ind==v1.size()-1) return next_ind;
 
-    while(is_a_valid_line(now_ind,next_ind+1)) next_ind++;
+    while(is_a_valid_line_v1(now_ind,next_ind+1)) next_ind++;
 
     return next_ind;
 }
